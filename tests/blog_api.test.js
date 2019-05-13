@@ -19,6 +19,11 @@ test('a specific blog should be within the result set', async () => {
   expect(contents).toContain('Go To Statement Considered Harmful')
 })
 
+test('blog identifier should be \'id\'', async () => {
+  const response = await api.get('/api/blogs')
+  expect(response.body[0].id).toBeDefined()
+})
+
 beforeEach(async () => {
   await Blog.deleteMany({})
 
