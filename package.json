@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "watch": "nodemon index.js",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "jest --verbose"
   },
   "repository": {
     "type": "git",
@@ -24,6 +25,10 @@
   },
   "devDependencies": {
     "eslint": "^5.16.0",
+    "jest": "^24.8.0",
     "nodemon": "^1.19.0"
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }
