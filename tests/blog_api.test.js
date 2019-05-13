@@ -15,13 +15,26 @@ test('4 blogs should be returned as json', async () => {
 
 test('a specific blog should be within the result set', async () => {
   const response = await api.get('/api/blogs')
-  const contents = response.body.map(res => res.title)
-  expect(contents).toContain('Go To Statement Considered Harmful')
+  const titles = response.body.map(res => res.title)
+  expect(titles).toContain('Go To Statement Considered Harmful')
 })
 
 test('blog identifier should be \'id\'', async () => {
   const response = await api.get('/api/blogs')
   expect(response.body[0].id).toBeDefined()
+})
+
+test('a new blog should be created', async () => {
+  const blog = {
+    title: 'IT-testi',
+    author: 'Testaaja',
+    likes: 3
+  }
+  await api.post('/api/blogs').send(blog)
+  const response = await api.get('/api/blogs')
+  expect(response.body.length).toBe(5)
+  const titles = response.body.map(res => res.title)
+  expect(titles).toContain('IT-testi')
 })
 
 beforeEach(async () => {
