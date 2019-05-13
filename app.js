@@ -1,0 +1,25 @@
+const express = require('express')
+const app = express()
+const bodyParser = require('body-parser')
+const cors = require('cors')
+const mongoose = require('mongoose')
+const morgan = require('morgan')
+const config = require('./utils/config')
+const logger = require('./utils/logger')
+const middleware = require('./utils/middleware')
+const blogRouter = require('./controllers/blogs')
+
+mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true })
+  .then(() => logger.info('connected to MongoDB'))
+  .catch(error => logger.error('failed to connect to MongoDB:', error.message))
+
+morgan.token('body', (req) => JSON.stringify(req.body))
+
+app.use(cors())
+app.use(bodyParser.json())
+app.use(morgan(':method :url :status :body - :response-time ms'))
+app.use(middleware.errorHandler)
+
+app.use('/api/blogs', blogRouter)
+
+module.exports = app
