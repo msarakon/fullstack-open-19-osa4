@@ -43,3 +43,41 @@ describe('favorite blog', () => {
     expect(result._id).toBe('5a422b3a1b54a676234d17f9')
   })
 })
+
+describe('most blogs', () => {
+
+  test('should return author for the single blog', () => {
+    const result = listHelper.mostBlogs(listWithOneBlog)
+    expect(result).toEqual({
+      author: listWithOneBlog[0].author,
+      blogs: 1
+    })
+  })
+
+  test('should return the author with most blogs', () => {
+    const result = listHelper.mostBlogs(mockData.blogs)
+    expect(result).toEqual({
+      author: 'Robert C. Martin',
+      blogs: 3
+    })
+  })
+})
+
+describe('most likes', () => {
+
+  test('should return author for the single blog', () => {
+    const result = listHelper.mostLikes(listWithOneBlog)
+    expect(result).toEqual({
+      author: listWithOneBlog[0].author,
+      likes: listWithOneBlog[0].likes
+    })
+  })
+
+  test('should return the author with most likes', () => {
+    const result = listHelper.mostLikes(mockData.blogs)
+    expect(result).toEqual({
+      author: 'Edsger W. Dijkstra',
+      likes: 17
+    })
+  })
+})
