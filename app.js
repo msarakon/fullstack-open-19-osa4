@@ -9,6 +9,8 @@ const logger = require('./utils/logger')
 const middleware = require('./utils/middleware')
 const blogRouter = require('./controllers/blogs')
 
+mongoose.set('useFindAndModify', false)
+
 mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true })
   .then(() => logger.info('connected to MongoDB'))
   .catch(error => logger.error('failed to connect to MongoDB:', error.message))

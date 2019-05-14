@@ -56,6 +56,20 @@ test('\'title\' and \'url\' should be mandatory fields', async () => {
   await api.post('/api/blogs').send(blog).expect(400)
 })
 
+test('should remove a blog', async () => {
+  await api.delete('/api/blogs/5a422aa71b54a676234d17f8').expect(204)
+  const response = await api.get('/api/blogs')
+  expect(response.body.length).toBe(5)
+  const titles = response.body.map(res => res.title)
+  expect(titles).not.toContain('Go To Statement Considered Harmful')
+})
+
+test('should return 404 when attempting to delete a blog that does not exist', async () => {
+  await api.delete('/api/blogs/5a422aa71b54a676234d17f7').expect(404)
+  const response = await api.get('/api/blogs')
+  expect(response.body.length).toBe(6)
+})
+
 beforeEach(async () => {
   await Blog.deleteMany({})
 
