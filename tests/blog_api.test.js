@@ -70,6 +70,18 @@ test('should return 404 when attempting to delete a blog that does not exist', a
   expect(response.body.length).toBe(6)
 })
 
+test('should update blog likes count', async () => {
+  const blog = { likes: 9 }
+  const response = await api.put('/api/blogs/5a422aa71b54a676234d17f8').send(blog)
+  console.log(response)
+  expect(response.body.likes).toBe(9)
+})
+
+test('should return 404 when attempting to update a blog that does not exist', async () => {
+  const blog = { likes: 9 }
+  await api.put('/api/blogs/5a422aa71b54a676234d17f7').send(blog).expect(404)
+})
+
 beforeEach(async () => {
   await Blog.deleteMany({})
 
