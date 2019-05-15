@@ -6,7 +6,7 @@ const mockData = require('./mock_data.js')
 
 const api = supertest(app)
 
-test('4 blogs should be returned as json', async () => {
+test('6 blogs should be returned as json', async () => {
   const response = await api.get('/api/blogs')
     .expect(200)
     .expect('Content-Type', /application\/json/)
@@ -84,10 +84,9 @@ test('should return 404 when attempting to update a blog that does not exist', a
 beforeEach(async () => {
   await Blog.deleteMany({})
 
-  mockData.blogs.forEach(async mockBlog => {
-    let blog = new Blog(mockBlog)
-    await blog.save()
-  })
+  const mockBlogs = mockData.blogs.map(blog => new Blog(blog))
+  const promiseArray = mockBlogs.map(blog => blog.save())
+  await Promise.all(promiseArray)
 })
 
 afterAll(() => mongoose.connection.close())

@@ -40,7 +40,7 @@ describe('favorite blog', () => {
 
   test('should return the blog with most likes', () => {
     const result = listHelper.favoriteBlog(mockData.blogs)
-    expect(result._id).toBe('5a422b3a1b54a676234d17f9')
+    expect(result.title).toBe('Canonical string reduction')
   })
 })
 
