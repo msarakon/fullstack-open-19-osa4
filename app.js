@@ -8,6 +8,7 @@ const config = require('./utils/config')
 const logger = require('./utils/logger')
 const middleware = require('./utils/middleware')
 const blogRouter = require('./controllers/blogs')
+const userRouter = require('./controllers/users')
 
 mongoose.set('useFindAndModify', false)
 
@@ -22,6 +23,7 @@ app.use(bodyParser.json())
 app.use(morgan(':method :url :status :body - :response-time ms'))
 
 app.use('/api/blogs', blogRouter)
+app.use('/api/users', userRouter)
 
 app.use(middleware.errorHandler)
 

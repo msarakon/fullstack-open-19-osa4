@@ -49,4 +49,14 @@ const blogs = [
   }  
 ]
 
-module.exports = { blogs }
+const users = [
+  {
+    _id: '5cdc4548d94dd02a50df1056',
+    username: 'test.user',
+    name: 'Test User',
+    passwordHash: '$2b$10$oQQRDFWFSTdTXwHdAkS5TuT.HlF3wpVv6LiyG61F9orR3Yw6wGzA2',
+    __v: 0
+  }  
+]
+
+module.exports = { blogs, users }
