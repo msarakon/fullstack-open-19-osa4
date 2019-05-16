@@ -43,7 +43,7 @@ test('password must be at least 3 characters long', async () => {
 
 test('username must be unique', async () => {
   const user = {
-    username: 'test.user',
+    username: 'test.user2',
     password: 'qwerty'
   }
   await api.post('/api/users').send(user).expect(400)
@@ -52,8 +52,8 @@ test('username must be unique', async () => {
 beforeEach(async () => {
   await User.deleteMany({})
 
-  await new User({ username: 'test.user', password: 'foobar' }).save()
-  await new User({ username: 'test.user2', password: 'foobar' }).save()
+  await new User({ username: 'test.user', passwordHash: 'foobar' }).save()
+  await new User({ username: 'test.user2', passwordHash: 'foobar' }).save()
 })
 
 afterAll(() => mongoose.connection.close())
