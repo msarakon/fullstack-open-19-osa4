@@ -5,11 +5,10 @@ const User = require('../models/user')
 
 const api = supertest(app)
 
-test('2 users should be returned as json', async () => {
-  const response = await api.get('/api/users')
+test('users should be returned as json', async () => {
+  await api.get('/api/users')
     .expect(200)
     .expect('Content-Type', /application\/json/)
-  expect(response.body.length).toBe(2)
 })
 
 test('a new user should be created', async () => {
@@ -20,7 +19,6 @@ test('a new user should be created', async () => {
   }
   await api.post('/api/users').send(user)
   const response = await api.get('/api/users')
-  expect(response.body.length).toBe(3)
   const names = response.body.map(res => res.name)
   expect(names).toContain('Big Boi')
 })

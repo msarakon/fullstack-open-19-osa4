@@ -22,6 +22,7 @@ morgan.token('body', (req) => JSON.stringify(req.body))
 app.use(cors())
 app.use(bodyParser.json())
 app.use(morgan(':method :url :status :body - :response-time ms'))
+app.use(middleware.tokenExtractor)
 
 app.use('/api/login', loginRouter)
 app.use('/api/blogs', blogRouter)
