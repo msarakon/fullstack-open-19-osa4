@@ -25,10 +25,7 @@ test('blog identifier should be \'id\'', async () => {
 })
 
 test('a new blog should be created', async () => {
-  const loginResponse = await api.post('/api/login').send({
-    username: 'blogger',
-    password: 'foobar'
-  }).expect(200)
+  const loginResponse = await login()
   const blog = {
     title: 'IT-testi',
     author: 'Testaaja',
@@ -46,10 +43,7 @@ test('a new blog should be created', async () => {
 })
 
 test('if no \'likes\' value is given, use default of 0', async () => {
-  const loginResponse = await api.post('/api/login').send({
-    username: 'blogger',
-    password: 'foobar'
-  }).expect(200)
+  const loginResponse = await login()
   const blog = {
     title: 'IT-testi',
     author: 'Testaaja',
@@ -63,10 +57,7 @@ test('if no \'likes\' value is given, use default of 0', async () => {
 })
 
 test('\'title\' and \'url\' should be mandatory fields', async () => {
-  const loginResponse = await api.post('/api/login').send({
-    username: 'blogger',
-    password: 'foobar'
-  }).expect(200)
+  const loginResponse = await login()
   const blog = {
     author: 'Testaaja',
     likes: 3
@@ -87,7 +78,10 @@ test('user must be logged in for blog creation', async () => {
 })
 
 test('should remove a blog', async () => {
-  await api.delete('/api/blogs/5a422aa71b54a676234d17f8').expect(204)
+  const loginResponse = await login()
+  await api.delete('/api/blogs/5a422aa71b54a676234d17f8')
+    .set('Authorization', `Bearer ${loginResponse.body.token}`)
+    .expect(204)
   const response = await api.get('/api/blogs')
   expect(response.body.length).toBe(5)
   const titles = response.body.map(res => res.title)
@@ -95,7 +89,10 @@ test('should remove a blog', async () => {
 })
 
 test('should return 404 when attempting to delete a blog that does not exist', async () => {
-  await api.delete('/api/blogs/5a422aa71b54a676234d17f7').expect(404)
+  const loginResponse = await login()
+  await api.delete('/api/blogs/5a422aa71b54a676234d17f7')
+    .expect(404)
+    .set('Authorization', `Bearer ${loginResponse.body.token}`)
   const response = await api.get('/api/blogs')
   expect(response.body.length).toBe(6)
 })
@@ -110,6 +107,13 @@ test('should return 404 when attempting to update a blog that does not exist', a
   const blog = { likes: 9 }
   await api.put('/api/blogs/5a422aa71b54a676234d17f7').send(blog).expect(404)
 })
+
+const login = () => {
+  return api.post('/api/login').send({
+    username: 'blogger',
+    password: 'foobar'
+  })
+}
 
 beforeEach(async () => {
   await Blog.deleteMany({})
