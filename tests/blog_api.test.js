@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const mockData = require('./mock_data.js')
 
 const api = supertest(app)
@@ -25,13 +26,20 @@ test('blog identifier should be \'id\'', async () => {
 })
 
 test('a new blog should be created', async () => {
+  const loginResponse = await api.post('/api/login').send({
+    username: 'blogger',
+    password: 'foobar'
+  }).expect(200)
   const blog = {
     title: 'IT-testi',
     author: 'Testaaja',
     url: 'www.google.fi',
     likes: 3
   }
-  await api.post('/api/blogs').send(blog).expect(201)
+  await api.post('/api/blogs')
+    .set('Authorization', `Bearer ${loginResponse.body.token}`)
+    .send(blog)
+    .expect(201)
   const response = await api.get('/api/blogs')
   expect(response.body.length).toBe(7)
   const titles = response.body.map(res => res.title)
@@ -39,21 +47,44 @@ test('a new blog should be created', async () => {
 })
 
 test('if no \'likes\' value is given, use default of 0', async () => {
+  const loginResponse = await api.post('/api/login').send({
+    username: 'blogger',
+    password: 'foobar'
+  }).expect(200)
   const blog = {
     title: 'IT-testi',
     author: 'Testaaja',
     url: 'www.google.fi'
   }
-  const response = await api.post('/api/blogs').send(blog).expect(201)
+  const response = await api.post('/api/blogs')
+    .set('Authorization', `Bearer ${loginResponse.body.token}`)
+    .send(blog)
+    .expect(201)
   expect(response.body.likes).toBe(0)
 })
 
 test('\'title\' and \'url\' should be mandatory fields', async () => {
+  const loginResponse = await api.post('/api/login').send({
+    username: 'blogger',
+    password: 'foobar'
+  }).expect(200)
   const blog = {
     author: 'Testaaja',
     likes: 3
   }
-  await api.post('/api/blogs').send(blog).expect(400)
+  await api.post('/api/blogs')
+    .set('Authorization', `Bearer ${loginResponse.body.token}`)
+    .send(blog)
+    .expect(400)
+})
+
+test('user must be logged in for blog creation', async () => {
+  const blog = {
+    title: 'IT-testi ilman autentikointia',
+    author: 'Testaaja',
+    url: 'www.google.fi'
+  }
+  await api.post('/api/blogs').send(blog).expect(401)
 })
 
 test('should remove a blog', async () => {
@@ -83,10 +114,17 @@ test('should return 404 when attempting to update a blog that does not exist', a
 
 beforeEach(async () => {
   await Blog.deleteMany({})
+  await User.findOneAndDelete({ username: 'blogger' })
 
   const mockBlogs = mockData.blogs.map(blog => new Blog(blog))
   const promiseArray = mockBlogs.map(blog => blog.save())
   await Promise.all(promiseArray)
+
+  const user = new User({
+    username: 'blogger',
+    passwordHash: '$2b$10$q/FLk8iUdwcU45xh.pSjcOtCgsEie8m9tT8ZVXpgeZOC3NUYIN8kG'
+  })
+  await user.save()
 })
 
 afterAll(() => mongoose.connection.close())

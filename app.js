@@ -7,6 +7,7 @@ const morgan = require('morgan')
 const config = require('./utils/config')
 const logger = require('./utils/logger')
 const middleware = require('./utils/middleware')
+const loginRouter = require('./controllers/login')
 const blogRouter = require('./controllers/blogs')
 const userRouter = require('./controllers/users')
 
@@ -22,6 +23,7 @@ app.use(cors())
 app.use(bodyParser.json())
 app.use(morgan(':method :url :status :body - :response-time ms'))
 
+app.use('/api/login', loginRouter)
 app.use('/api/blogs', blogRouter)
 app.use('/api/users', userRouter)
 
