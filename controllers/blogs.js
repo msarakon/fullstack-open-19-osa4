@@ -37,6 +37,7 @@ blogRouter.put('/:id', async (request, response, next) => {
       request.params.id,
       request.body,
       { new: true })
+      .populate('user', { username: 1, name : 1 })
     if (result) response.status(200).json(result)
     else response.status(404).end()
   } catch (error) {
